@@ -2,28 +2,27 @@
 Servo servo_class;
 
 int currentPlayerNum = 2;
-
 // Initialize all LEDs and buttons with corresponding pins
 // 1. Red
-int redIn =13;        // Input pin for Red button
-int redOut = 2;       // Output pin for Red LED
+int redIn = D0;        // Input pin for Red button
+int redOut = D1;       // Output pin for Red LED
 int red = 0;
 // 2. Green
 int green = 0;
-int greenIn = 11;     // Input pin for Green button
-int greenOut = 10;    // Output pin for Green LED
+int greenIn = D3;     // Input pin for Green button
+int greenOut = D4;    // Output pin for Green LED
 // 3. Blue
 int blue = 0;
-int blueIn = 8;       // Input pin for Blue button
-int blueOut = 4;      // Output pin for Blue LED
+int blueIn = D5;       // Input pin for Blue button
+int blueOut = D6;      // Output pin for Blue LED
 // 4. Pink
-int pink = 0; 
-int pinkIn = 9;       // Input pin for Pink button
-int pinkOut = 5;      // Output pin for Pink LED
-// 5. Yellow 
+int pink = 0;
+int pinkIn = D7;       // Input pin for Pink button
+int pinkOut = D8;      // Output pin for Pink LED
+// 5. Yellow
 int yellow = 0;
-int yellowIn = 12;    // Input pin for Yellow button
-int yellowOut = 6;    // Output pin for Yellow LED
+int yellowIn = D2;    // Input pin for Yellow button
+int yellowOut = 3;    // Output pin for Yellow LED
 // Buzzer
 int buzzer = 3;      // Pin for Buzzer
 int servo_motor = 7;  // Pin for Servo motor
@@ -64,7 +63,7 @@ void setup() {
 
   randomSeed(analogRead(0)); // Seed the random generator
 
-  ledAllOn();  
+  ledAllOn();
 }
 
 void loop() {
@@ -118,7 +117,7 @@ boolean isWhacked(int newColor) {
   boolean buttonPressed = false;
 
   while (!buttonPressed) { // Wait until any button is pressed
-    chkButton = isButtonPressed(); 
+    chkButton = isButtonPressed();
 
     if (newColor == chkButton) { // Correct button pressed
       whacked = true;
@@ -127,7 +126,7 @@ boolean isWhacked(int newColor) {
 
       score++; // Increase score
       motorRotation = (score * increment); // Calculate servo rotation
-    
+
       servo_class.write(motorRotation); // Move servo
 
       if (motorRotation >= 180) {
@@ -141,10 +140,10 @@ boolean isWhacked(int newColor) {
       if (score > -1) {
         score--; // Increase score
         motorRotation = (score * increment); // Calculate servo rotation
-      
+
         servo_class.write(motorRotation); // Move servo
       }
-    } 
+    }
     delay(100);
   }
 
@@ -181,22 +180,22 @@ int isButtonPressed() {
     ledOff(redOut);
     buttonPressed = redOut;
   }
-  
+
   if (digitalRead(blueIn) == LOW) {
     ledOff(blueOut);
     buttonPressed = blueOut;
   }
-  
+
   if (digitalRead(yellowIn) == LOW) {
     ledOff(yellowOut);
     buttonPressed = yellowOut;
   }
-  
+
   if (digitalRead(greenIn) == LOW) {
     ledOff(greenOut);
     buttonPressed = greenOut;
   }
-  
+
   if (digitalRead(pinkIn) == LOW) {
     ledOff(pinkOut);
     buttonPressed = pinkOut;
@@ -259,4 +258,3 @@ void ledAllOff() {
   digitalWrite(greenOut, LOW);
   digitalWrite(pinkOut, LOW);
 }
-
