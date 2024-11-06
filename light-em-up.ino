@@ -59,6 +59,7 @@ void loop() {
     isPlayerTwoReady = false;
 
     isGameRunning = true;
+    score = 0;
 
     ledAllOff();
 
@@ -102,7 +103,7 @@ boolean isWhacked(int newColor) {
       }
 
     } else if (chkButton != 0) { // Incorrect button pressed
-      if (score >= 0) {
+      if (score > 0) {
         score--; // Increase score
       }
     }
@@ -118,9 +119,6 @@ void playerWon() {
 
   isPlayerOneReady = true; // Change
   isPlayerTwoReady = false;
-
-  score = 0;
-
   delay(2000);
 }
 
