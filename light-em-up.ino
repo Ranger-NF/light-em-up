@@ -22,7 +22,7 @@ int pinkOut = D8;      // Output pin for Pink LED
 // 5. Yellow
 int yellow = 0;
 int yellowIn = D2;    // Input pin for Yellow button
-int yellowOut = 3;    // Output pin for Yellow LED
+int yellowOut = 1;    // Output pin for Yellow LED
 // Buzzer
 int buzzer = 3;      // Pin for Buzzer
 int servo_motor = 7;  // Pin for Servo motor
@@ -37,7 +37,7 @@ int startButton = redOut; // Change this for every board
 
 bool isGameRunning = false;
 
-bool isPlayerOneReady = false;
+bool isPlayerOneReady = true;
 bool isPlayerTwoReady = false;
 
 void setup() {
@@ -55,13 +55,13 @@ void setup() {
   pinMode(greenIn, INPUT_PULLUP);
   pinMode(pinkIn, INPUT_PULLUP);
 
-  pinMode(buzzer, OUTPUT); // Setup buzzer as output
+  // pinMode(buzzer, OUTPUT); // Setup buzzer as output
 
-  servo_class.attach(servo_motor); // Attach servo to pin
-  servo_class.write(0); // Initialize servo position to 0 degrees
+  // servo_class.attach(servo_motor); // Attach servo to pin
+  // servo_class.write(0); // Initialize servo position to 0 degrees
 
 
-  randomSeed(analogRead(0)); // Seed the random generator
+  // randomSeed(analogRead(0)); // Seed the random generator
 
   ledAllOn();
 }
