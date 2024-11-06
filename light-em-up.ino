@@ -1,39 +1,35 @@
 #include <Servo.h>
+
+
 Servo servo_class;
 
 int currentPlayerNum = 2;
 // Initialize all LEDs and buttons with corresponding pins
 // 1. Red
 int redIn = D0;        // Input pin for Red button
-int redOut = D1;       // Output pin for Red LED
-int red = 0;
+int redOut = D1;
+int red = 0;// Output pin for Red LED
+
 // 2. Green
 int green = 0;
 int greenIn = D3;     // Input pin for Green button
 int greenOut = D4;    // Output pin for Green LED
 // 3. Blue
-int blue = 0;
+
 int blueIn = D5;       // Input pin for Blue button
 int blueOut = D6;      // Output pin for Blue LED
 // 4. Pink
-int pink = 0;
 int pinkIn = D7;       // Input pin for Pink button
 int pinkOut = D8;      // Output pin for Pink LED
 // 5. Yellow
-int yellow = 0;
 int yellowIn = D2;    // Input pin for Yellow button
 int yellowOut = 1;    // Output pin for Yellow LED
-// Buzzer
-int buzzer = 3;      // Pin for Buzzer
-int servo_motor = 7;  // Pin for Servo motor
 
 int score = 0;        // Track the score
-int increment = 18;   // Servo rotation increment per hit
-int motorRotation = 0; // Current rotation angle for the servo
 
 int currentColor = -1; // Holds the active color for each round
 
-int startButton = redOut; // Change this for every board
+int startButton = pinkOut; // Change this for every board
 
 bool isGameRunning = false;
 
@@ -56,13 +52,6 @@ void setup() {
   pinMode(pinkIn, INPUT_PULLUP);
 
   // pinMode(buzzer, OUTPUT); // Setup buzzer as output
-
-  // servo_class.attach(servo_motor); // Attach servo to pin
-  // servo_class.write(0); // Initialize servo position to 0 degrees
-
-
-  // randomSeed(analogRead(0)); // Seed the random generator
-
   ledAllOn();
 }
 
@@ -77,9 +66,7 @@ void loop() {
       setupCurrentColor(newColor); // Set up the new color
     }
   } else if (isPlayerOneReady && isPlayerTwoReady) {
-
-
-    isPlayerOneReady = false;
+    isPlayerOneReady = true; // Change
     isPlayerTwoReady = false;
 
     isGameRunning = true;
@@ -122,14 +109,11 @@ boolean isWhacked(int newColor) {
     if (newColor == chkButton) { // Correct button pressed
       whacked = true;
       buttonPressed = true;
-      tone(buzzer, 2000, 500); // Play buzzer sound
+      // tone(buzzer, 2000, 500); // Play buzzer sound
 
       score++; // Increase score
-      motorRotation = (score * increment); // Calculate servo rotation
 
-      servo_class.write(motorRotation); // Move servo
-
-      if (motorRotation >= 180) {
+      if (score >= 10) {
         playerWon();
       }
 
@@ -137,12 +121,9 @@ boolean isWhacked(int newColor) {
       whacked = false;
       buttonPressed = true;
 
-      if (score > -1) {
-        score--; // Increase score
-        motorRotation = (score * increment); // Calculate servo rotation
-
-        servo_class.write(motorRotation); // Move servo
-      }
+      // if (score > -1) {
+      //   score--; // Increase score
+      // }
     }
     delay(100);
   }
@@ -155,21 +136,12 @@ void playerWon() {
   isGameRunning = false;
   ledAllOn();
 
-  motorRotation = 0;
+  isPlayerOneReady = true; // Change
+  isPlayerTwoReady = false;
+
   score = 0;
 
-  int spinTime = 3000;
-  int i =0;
-
-  while (i < spinTime) {
-    motorRotation = i % 180;
-    servo_class.write(motorRotation);
-    i++;
-    delay(1);
-  }
-
-  motorRotation = 0;
-  servo_class.write(motorRotation);
+  delay(2000);
 }
 
 int isButtonPressed() {
@@ -206,7 +178,7 @@ int isButtonPressed() {
 
 // Function to randomly pick a new color LED
 int pickNewColor() {
-  int usableLeds[5] = {redOut, greenOut, blueOut, pinkOut, yellowOut};
+  int usableLeds[5] = {greenOut, redOut, blueOut, pinkOut, yellowOut};
   int randIndex = random(0, 5); // Random index between 0 and 4
   int randomColor = usableLeds[randIndex];
 
