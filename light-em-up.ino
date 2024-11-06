@@ -1,33 +1,22 @@
-#include <Servo.h>
-
-
-Servo servo_class;
-
 int currentPlayerNum = 2;
-// Initialize all LEDs and buttons with corresponding pins
-// 1. Red
+
 int redIn = D0;        // Input pin for Red button
 int redOut = D1;
-int red = 0;// Output pin for Red LED
 
-// 2. Green
-int green = 0;
 int greenIn = D3;     // Input pin for Green button
 int greenOut = D4;    // Output pin for Green LED
-// 3. Blue
 
 int blueIn = D5;       // Input pin for Blue button
 int blueOut = D6;      // Output pin for Blue LED
-// 4. Pink
+
 int pinkIn = D7;       // Input pin for Pink button
 int pinkOut = D8;      // Output pin for Pink LED
-// 5. Yellow
+
 int yellowIn = D2;    // Input pin for Yellow button
 int yellowOut = 1;    // Output pin for Yellow LED
 
 int score = 0;        // Track the score
-
-int currentColor = -1; // Holds the active color for each round
+int currentColor = -1;
 
 int startButton = pinkOut; // Change this for every board
 
@@ -100,36 +89,27 @@ void setupCurrentColor(int newColor) {
 
 boolean isWhacked(int newColor) {
   int chkButton;
-  boolean whacked = false;
   boolean buttonPressed = false;
 
   while (!buttonPressed) { // Wait until any button is pressed
     chkButton = isButtonPressed();
 
     if (newColor == chkButton) { // Correct button pressed
-      whacked = true;
       buttonPressed = true;
-      // tone(buzzer, 2000, 500); // Play buzzer sound
-
       score++; // Increase score
-
       if (score >= 10) {
         playerWon();
       }
 
-    } else if (chkButton > 0) { // Incorrect button pressed
-      whacked = false;
-      buttonPressed = true;
-
-      // if (score > -1) {
-      //   score--; // Increase score
-      // }
+    } else if (chkButton != 0) { // Incorrect button pressed
+      if (score >= 0) {
+        score--; // Increase score
+      }
     }
     delay(100);
   }
 
-
-  return whacked;
+  return buttonPressed;
 }
 
 void playerWon() {
@@ -145,35 +125,31 @@ void playerWon() {
 }
 
 int isButtonPressed() {
-  int buttonPressed = 0;
+  int pressedButton = 0;
 
   // Check each button and return the corresponding LED output pin if pressed
   if (digitalRead(redIn) == LOW) {
     ledOff(redOut);
-    buttonPressed = redOut;
+    pressedButton = redOut;
   }
-
   if (digitalRead(blueIn) == LOW) {
     ledOff(blueOut);
-    buttonPressed = blueOut;
+    pressedButton = blueOut;
   }
-
   if (digitalRead(yellowIn) == LOW) {
     ledOff(yellowOut);
-    buttonPressed = yellowOut;
+    pressedButton = yellowOut;
   }
-
   if (digitalRead(greenIn) == LOW) {
     ledOff(greenOut);
-    buttonPressed = greenOut;
+    pressedButton = greenOut;
   }
-
   if (digitalRead(pinkIn) == LOW) {
     ledOff(pinkOut);
-    buttonPressed = pinkOut;
+    pressedButton = pinkOut;
   }
 
-  return buttonPressed;
+  return pressedButton;
 }
 
 // Function to randomly pick a new color LED
