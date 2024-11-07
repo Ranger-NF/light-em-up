@@ -1,62 +1,10 @@
-const express = require("express");
-
-let last_id = 0;
-
-let current_players = [];
-let active_player_count = 0;
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Serve static files
-app.get("/newgame", (req, res) => {
-  let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-
-  if (active_player_count > 0 && active_player_count < 2) {
-    last_id++;
-    current_players.add({
-      score: 0,
-      mcu_id: req.body.mcu_id,
-      identifier: ip,
-    });
-    active_player_count += 1;
-
-    res.send(last_id);
-  } else {
-    // current_players = [];
-    // active_player_count = 0;
-    res.send(0);
-  }
-});
-
-app.post("/score", (req, res) => {
-  const mcu_id = req.body.mcu_id;
-  const score = req.body.score;
-
-  if (current_players.has(mcu_id)) {
-    current_players[mcu_id].score = score;
-    res.send(1);
-  } else {
-    res.send(0);
-  }
-});
-
-app.get("/", (req, res) => {
-  res.send(current_players);
-});
-
-// Set up Express server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
-// function check_score() {
-//   for (each_player in current_players) {
-//     if (each_player.score > 10) {
-//       return;
-//     }
-//   }
-// }
+// Game state variables
+let score1 = 0;
+let score2 = 0;
+const WINNING_SCORE = 10;
+let isAnimating = false;
+const player1Name = "Player 1"; // Player 1 name variable
+const player2Name = "Player 2"; // Player 2 name variable
 
 // DOM elements for game UI
 const probabilityIndicator = document.querySelector(".probability-indicator");
@@ -73,14 +21,6 @@ const player2Label = document.querySelector(
   ".scores .player-score:last-child .player-label",
 );
 const winSound = document.getElementById("winSound");
-
-// Game state variables
-let score1 = 0;
-let score2 = 0;
-const WINNING_SCORE = 10;
-let isAnimating = false;
-const player1Name = "Player 1"; // Player 1 name variable
-const player2Name = "Player 2"; // Player 2 name variable
 
 // Calculates win probability percentage based on player scores
 function calculateWinProbability(score1, score2) {
@@ -186,12 +126,20 @@ function updateDashboard() {
   checkWinner();
 }
 
-function updateScore() {
-  score1 = player[0].score;
-}
-
+console.log(window.location.href);
 // Initialize game dashboard
 updateDashboard();
 
-// Poll for score updates every 100ms
-setInterval(fetchScores, 100);
+setInterval(() => {
+  fetch(window.location.href + "data")
+    .then(async (res) => {
+      let data = await res.json();
+      console.log(data);
+
+      score1 = data.score1;
+      score2 = data.score2;
+
+      updateDashboard();
+    })
+    .then((err) => console.log(err));
+}, 1000);

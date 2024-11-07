@@ -1,59 +1,60 @@
 const express = require("express");
-
-let last_id = 0;
-
-let current_players = {};
-let active_player_count = 0;
-
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-// Serve static files
-app.get("/newgame", (req, res) => {
-  let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+let score = 0;
 
-  if (active_player_count > 0 && active_player_count < 2) {
-    last_id++;
-    current_players[last_id] = {
-      score: 0,
-      mcu_id: req.body.mcu_id,
-      identifier: ip,
-    };
-    active_player_count += 1;
+let current_players = [];
 
-    res.send(last_id);
-  } else {
-    current_players = {};
-    active_player_count = 0;
-    res.send(0);
-  }
+app.get("/setup", (req, res) => {
+  res.send("done");
 });
 
-app.post("/score", (req, res) => {
-  const mcu_id = req.body.mcu_id;
-  const score = req.body.score;
-
-  if (current_players.has(mcu_id)) {
-    current_players[mcu_id].score = score;
-    res.send(1);
-  } else {
-    res.send(0);
-  }
+app.get("/data", (req, res) => {
+  score++;
+  res.json({
+    score1: score,
+    score2: score + 2,
+  });
 });
 
-app.get("/", (req, res) => {
-  res.send(current_players);
-});
-
-// Set up Express server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Example app listening on port ${port}`);
 });
 
-function check_score() {
-  for (each_player in current_players) {
-    if (each_player.score > 10) {
-      return;
+app.use(express.static("public"));
+
+function checkIfGameStart() {
+  let canGameStart = true;
+
+  if (current_players.length == 2) {
+    for (let eachPlayer in current_players) {
+      fetch(eachPlayer).catch((err) => {
+        canGameStart = false;
+        current_players.remove(eachPlayer);
+      });
     }
+  } else {
+    canGameStart = false;
+  }
+
+  if (canGameStart) {
+    setInterval(() => {
+      let i = 1;
+
+      for (let eachPlayer in current_players) {
+        fetch(eachPlayer)
+          .then((res) => {
+            if (i == 1) {
+              score1 = parseInt(res.text());
+            } else if (i == 2) {
+              score2 = parseInt(res.text());
+            }
+          })
+          .catch((err) => exitGameLoop());
+      }
+
+      updateDashboard();
+    }, 1000);
   }
 }
