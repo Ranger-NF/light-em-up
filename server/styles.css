@@ -1,0 +1,191 @@
+/* Base styles for the body */
+body {
+    font-family: "Roboto", "Arial", sans-serif;
+    background: linear-gradient(135deg, #f6f8fc 0%, #e9ecef 100%);
+    margin: 0;
+    padding: 0;
+    color: #2d3436;
+    line-height: 1.6;
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Main dashboard container */
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    width: 95%;
+    min-height: calc(100vh - 80px);
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+}
+
+/* Main heading styles */
+.dashboard h1 {
+    font-size: clamp(28px, 6vw, 48px);
+    margin-bottom: 25px;
+    word-wrap: break-word;
+    padding: 0 10px;
+    background: linear-gradient(45deg, #2171cc, #d62b54);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+/* Secondary heading styles */
+.dashboard h2 {
+    font-size: clamp(22px, 4.5vw, 36px);
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    padding: 0 10px;
+    color: #4a4a4a;
+    text-align: center;
+}
+
+/* Probability meter styling */
+.probability-meter {
+    height: 70px;
+    background: linear-gradient(
+        to right,
+        #2171cc 0%,
+        #4a90e2 25%,
+        #33cc33 50%,
+        #e74c3c 75%,
+        #d62b54 100%
+    );
+    border-radius: 35px;
+    margin: 40px auto;
+    position: relative;
+    box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.15);
+    width: 85%;
+    max-width: 900px;
+    transition: all 0.3s ease;
+}
+
+/* Moving indicator on probability meter */
+.probability-indicator {
+    width: 10px;
+    height: 90px;
+    background-color: #2d3436;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Score container layout */
+.scores {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    gap: 40px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Individual player score card */
+.player-score {
+    text-align: center;
+    flex: 0 1 300px;
+    padding: 30px;
+    transition: all 0.3s ease;
+    min-width: 200px;
+    position: relative;
+}
+
+/* Player 1 score card styling */
+.player-score:first-child {
+    color: #2171cc;
+}
+
+/* Player 2 score card styling */
+.player-score:last-child {
+    color: #d62b54;
+}
+
+/* Hover effect for score cards */
+.player-score:hover {
+    transform: translateY(-8px);
+}
+
+/* Score number display */
+.score-value {
+    font-size: clamp(42px, 7vw, 130px);
+    font-weight: 700;
+    margin: 20px 0;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    letter-spacing: 2px;
+}
+
+/* Player name label */
+.player-label {
+    font-size: clamp(18px, 3.5vw, 34px);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 600;
+    padding: 8px 15px;
+    display: inline-block;
+}
+
+/* Winner player label animation */
+.player-label.winner {
+    animation: winnerPulse 1s ease-in-out infinite;
+    color: #33cc33;
+    text-shadow: 0 0 10px rgba(51, 204, 51, 0.5);
+}
+
+@keyframes winnerPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Responsive design adjustments */
+@media screen and (max-width: 600px) {
+    .dashboard {
+        padding: 20px 15px;
+        border-radius: 15px;
+    }
+
+    .scores {
+        margin-top: 35px;
+        gap: 20px;
+        padding: 0 10px;
+    }
+
+    .player-score {
+        padding: 20px;
+        min-width: 140px;
+    }
+
+    .probability-meter {
+        width: 92%;
+        height: 55px;
+        margin: 25px auto;
+    }
+
+    .probability-indicator {
+        height: 75px;
+        width: 8px;
+    }
+}

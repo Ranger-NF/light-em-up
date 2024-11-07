@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Meta tags for character encoding and responsive viewport -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LED Button Whack-a-Mole</title>
+
+        <!-- Font preloading and stylesheet -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Application assets -->
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="icon" type="image/png" href="favicon.png" />
+
+        <!-- SEO and mobile appearance -->
+        <meta
+            name="description"
+            content="An exciting two-player LED button Whack-a-Mole game. Race to 10 points!"
+        />
+        <meta name="theme-color" content="#2171cc" />
+    </head>
+    <body>
+        <!-- Main game dashboard -->
+        <div class="dashboard">
+            <!-- Game title and rules -->
+            <h1>LED Button Whack-a-Mole</h1>
+            <h2>First to 10 Points Wins!</h2>
+
+            <!-- Progress indicator with ARIA labels for accessibility -->
+            <div
+                class="probability-meter"
+                role="progressbar"
+                aria-label="Game progress indicator"
+            >
+                <div class="probability-indicator"></div>
+            </div>
+
+            <!-- Player score displays with ARIA live regions for dynamic updates -->
+            <div class="scores">
+                <!-- Player 1 score section -->
+                <div class="player-score" role="status" aria-live="polite">
+                    <div class="player-label" id="player1Name"></div>
+                    <div class="score-value" id="score1">0</div>
+                    <div class="player-label">Score</div>
+                </div>
+
+                <!-- Player 2 score section -->
+                <div class="player-score" role="status" aria-live="polite">
+                    <div class="player-label" id="player2Name"></div>
+                    <div class="score-value" id="score2">0</div>
+                    <div class="player-label">Score</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio for winner celebration -->
+        <audio id="winSound" preload="auto">
+            <source src="win.mp3" type="audio/mpeg" />
+        </audio>
+
+        <!-- Deferred JavaScript loading -->
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+        <script src="script.js" defer></script>
+    </body>
+</html>

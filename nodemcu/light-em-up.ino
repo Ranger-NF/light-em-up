@@ -1,7 +1,13 @@
-int currentPlayerNum = 2;
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
 
-int redIn = D0;        // Input pin for Red button
-int redOut = D1;
+const char* SSID = "FTTH";
+const char* password = "12345678";
+
+int currentPlayerId = -1;
+
+int redIn = D1;        // Input pin for Red button
+int redOut = D0;
 
 int greenIn = D3;     // Input pin for Green button
 int greenOut = D4;    // Output pin for Green LED
@@ -22,8 +28,11 @@ int startButton = pinkOut; // Change this for every board
 
 bool isGameRunning = false;
 
-bool isPlayerOneReady = true;
-bool isPlayerTwoReady = false;
+bool isPlayerReady = false;
+bool isOpponentReady = false;
+
+int wifiTimeout = 10;
+int isWifiConnected = false;
 
 void setup() {
   // Setup all LED output pins
@@ -40,21 +49,74 @@ void setup() {
   pinMode(greenIn, INPUT_PULLUP);
   pinMode(pinkIn, INPUT_PULLUP);
 
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(SSID, password);
+
+  while (WiFi.status() != WL_CONNECTED && wifiTimeout > 0) {
+    wifiTimeout--;
+    ledOn(redOut);
+    delay(150);
+    ledOn(pinkOut);
+    delay(150);
+    ledOn(greenOut);
+    delay(150);
+    ledOn(yellowOut);
+    delay(150);
+    ledOn(blueOut);
+    delay(150);
+    ledAllOff();
+    delay(150);
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+      isWifiConnected = true;
+
+      ledOn(greenOut);
+      delay(200);
+      ledOff(greenOut);
+      delay(200);
+      ledOn(greenOut);
+      delay(200);
+      ledOff(greenOut);
+      delay(200);
+      ledOn(greenOut);
+      delay(200);
+      ledOff(greenOut);
+      delay(200);
+  } else { // Connection failed
+      isWifiConnected = false;
+
+        ledOn(redOut);
+        delay(200);
+        ledOff(redOut);
+        delay(200);
+        ledOn(redOut);
+        delay(200);
+        ledOff(redOut);
+        delay(200);
+        ledOn(redOut);
+        delay(200);
+        ledOff(redOut);
+        delay(200);
+
+  }
+    ledAllOn();
+
   // pinMode(buzzer, OUTPUT); // Setup buzzer as output
-  ledAllOn();
 }
 
 void loop() {
   if (isGameRunning) {
-    if (isWhacked(currentColor)) { // Check if the correct button was pressed
-      ledOff(currentColor); // Turn off current LED
-      delay(100); // Pause briefly before showing a new mole
+    if (isCorrectButtonPresed(currentColor)) { // Check if the correct button was presse
 
-      int newColor = pickNewColor(); // Pick a new color
-
-      setupCurrentColor(newColor); // Set up the new color
+      if (isGameRunning) {
+        ledOff(currentColor); // Turn off current LED
+        delay(500);
+        int newColor = pickNewColor(); // Pick a new color
+        setupCurrentColor(newColor); // Set up the new color
+      }
     }
-  } else if (isPlayerOneReady && isPlayerTwoReady) {
+  } else if (isPlayerReady && isOpponentReady) {
     isPlayerOneReady = true; // Change
     isPlayerTwoReady = false;
 
@@ -63,7 +125,7 @@ void loop() {
 
     ledAllOff();
 
-    delay(500);
+    delay(100);
 
     int newColor = pickNewColor(); // Pick a random color to start
 
@@ -72,14 +134,11 @@ void loop() {
     int pushedButton = isButtonPressed();
 
     if (pushedButton == startButton) {
-      if (currentPlayerNum == 1) {
-        isPlayerOneReady = true;
-      } else {
-        isPlayerTwoReady = true;
-      }
-
+        isPlayerReady = true
     }
   }
+
+  delay(1);
 
 }
 
@@ -88,29 +147,23 @@ void setupCurrentColor(int newColor) {
   currentColor = newColor; // Update the active color
 }
 
-boolean isWhacked(int newColor) {
-  int chkButton;
-  boolean buttonPressed = false;
+boolean isCorrectButtonPresed(int currentTargetColor) {
+    int pressedButton;
+    boolean correctButtonPressed = false;
 
-  while (!buttonPressed) { // Wait until any button is pressed
-    chkButton = isButtonPressed();
+    pressedButton = isButtonPressed();
 
-    if (newColor == chkButton) { // Correct button pressed
-      buttonPressed = true;
-      score++; // Increase score
-      if (score >= 10) {
-        playerWon();
-      }
+    if (currentTargetColor == pressedButton) { // Correct button pressed
+        ledOff(pressedButton);
+        correctButtonPressed = true;
+        score++; // Increase score
+        sendMessage("Score: " + String(score));
 
-    } else if (chkButton != 0) { // Incorrect button pressed
-      if (score > 0) {
-        score--; // Increase score
-      }
+        if (score >= 10) {
+            playerWon();
+        }
     }
-    delay(100);
-  }
-
-  return buttonPressed;
+    return correctButtonPressed;
 }
 
 void playerWon() {
@@ -127,24 +180,24 @@ int isButtonPressed() {
 
   // Check each button and return the corresponding LED output pin if pressed
   if (digitalRead(redIn) == LOW) {
-    ledOff(redOut);
     pressedButton = redOut;
   }
   if (digitalRead(blueIn) == LOW) {
-    ledOff(blueOut);
     pressedButton = blueOut;
   }
   if (digitalRead(yellowIn) == LOW) {
-    ledOff(yellowOut);
     pressedButton = yellowOut;
   }
   if (digitalRead(greenIn) == LOW) {
-    ledOff(greenOut);
     pressedButton = greenOut;
   }
   if (digitalRead(pinkIn) == LOW) {
-    ledOff(pinkOut);
     pressedButton = pinkOut;
+  }
+  if (pressedButton != 0) {
+      ledOff(pressedButton);
+      // sendMessage("Pressed button: " + String(pressedButton));
+
   }
 
   return pressedButton;
@@ -176,6 +229,7 @@ void ledOn(int colorON) {
 
 // Function to turn off LED based on the given color pin
 void ledOff(int colorOFF) {
+
   if (colorOFF == redOut) {
     digitalWrite(redOut, LOW);
   } else if (colorOFF == blueOut) {
@@ -203,4 +257,25 @@ void ledAllOff() {
   digitalWrite(yellowOut, LOW);
   digitalWrite(greenOut, LOW);
   digitalWrite(pinkOut, LOW);
+}
+
+void sendMessage(String msg) {
+    return;
+    WiFiClient client;
+
+    const char* serverHost = "ntfy.sh";
+
+    if (!client.connect(serverHost, 80)) {
+      return;
+    }
+    String url = "/light-em-up";
+
+
+    client.print("POST " + url + " HTTP/1.1\r\n" +
+                 "Host: " + serverHost + "\r\n" +
+                 "Content-Type: application/json\r\n" +
+                 "Content-Length: " + msg.length() + "\r\n" +
+                 "Connection: close\r\n\r\n" +
+                 msg);
+
 }
