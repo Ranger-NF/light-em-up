@@ -1,10 +1,11 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include <ESP8266WebServer.h>
 
-const char* SSID = "FTTH";
-const char* password = "12345678";
+const char* SSID = "light-em-up";
+const char* password = "8096light";
 
-int currentPlayerId = -1;
+ESP8266WebServer server(80);
 
 int redIn = D1;        // Input pin for Red button
 int redOut = D0;
@@ -29,7 +30,7 @@ int startButton = pinkOut; // Change this for every board
 bool isGameRunning = false;
 
 bool isPlayerReady = false;
-bool isOpponentReady = false;
+bool isOpponentReady = true;
 
 int wifiTimeout = 10;
 int isWifiConnected = false;
@@ -71,6 +72,10 @@ void setup() {
   if (WiFi.status() == WL_CONNECTED) {
       isWifiConnected = true;
 
+      sendIp();
+      server.on("/",HTTP_GET, sendScore);
+      server.begin();
+
       ledOn(greenOut);
       delay(200);
       ledOff(greenOut);
@@ -100,9 +105,9 @@ void setup() {
         delay(200);
 
   }
+
     ledAllOn();
 
-  // pinMode(buzzer, OUTPUT); // Setup buzzer as output
 }
 
 void loop() {
@@ -117,8 +122,9 @@ void loop() {
       }
     }
   } else if (isPlayerReady && isOpponentReady) {
-    isPlayerOneReady = true; // Change
-    isPlayerTwoReady = false;
+    // isPlayerOneReady = true; // Change
+    // isPlayerTwoReady = false;
+    isPlayerReady = false;
 
     isGameRunning = true;
     score = 0;
@@ -134,11 +140,12 @@ void loop() {
     int pushedButton = isButtonPressed();
 
     if (pushedButton == startButton) {
-        isPlayerReady = true
+        isPlayerReady = true;
     }
   }
 
   delay(1);
+server.handleClient();
 
 }
 
@@ -157,7 +164,6 @@ boolean isCorrectButtonPresed(int currentTargetColor) {
         ledOff(pressedButton);
         correctButtonPressed = true;
         score++; // Increase score
-        sendMessage("Score: " + String(score));
 
         if (score >= 10) {
             playerWon();
@@ -168,15 +174,18 @@ boolean isCorrectButtonPresed(int currentTargetColor) {
 
 void playerWon() {
   isGameRunning = false;
+
   ledAllOn();
 
-  isPlayerOneReady = true; // Change
-  isPlayerTwoReady = false;
+  // isPlayerOneReady = true; // Change
+  // isPlayerTwoReady = false;
   delay(2000);
 }
 
 int isButtonPressed() {
   int pressedButton = 0;
+
+  delay(2);
 
   // Check each button and return the corresponding LED output pin if pressed
   if (digitalRead(redIn) == LOW) {
@@ -196,8 +205,6 @@ int isButtonPressed() {
   }
   if (pressedButton != 0) {
       ledOff(pressedButton);
-      // sendMessage("Pressed button: " + String(pressedButton));
-
   }
 
   return pressedButton;
@@ -259,9 +266,14 @@ void ledAllOff() {
   digitalWrite(pinkOut, LOW);
 }
 
-void sendMessage(String msg) {
-    return;
+void sendScore() {
+    server.send(200, "text/plain", String(score));
+}
+
+void sendIp() {
     WiFiClient client;
+    IPAddress ip = WiFi.localIP();
+    String msg = ip.toString();
 
     const char* serverHost = "ntfy.sh";
 
@@ -273,7 +285,7 @@ void sendMessage(String msg) {
 
     client.print("POST " + url + " HTTP/1.1\r\n" +
                  "Host: " + serverHost + "\r\n" +
-                 "Content-Type: application/json\r\n" +
+                 "Content-Type: text\r\n" +
                  "Content-Length: " + msg.length() + "\r\n" +
                  "Connection: close\r\n\r\n" +
                  msg);

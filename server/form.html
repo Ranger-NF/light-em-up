@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>URL Post Form</title>
+    </head>
+    <body>
+        <h1>Submit URL</h1>
+        <form action="/submit-url" method="POST" id="urlForm">
+            <label for="urlInput">Enter URL:</label>
+            <input type="text" id="urlInput" name="url" required />
+            <button type="submit">Submit</button>
+        </form>
+
+        <script>
+            document
+                .getElementById("urlForm")
+                .addEventListener("submit", function (event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    const url = document.getElementById("urlInput").value;
+                    const requestData = JSON.stringify({ url: url });
+
+                    fetch(window.location.href, {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: requestData,
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log("Success:", data);
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                        });
+                });
+        </script>
+    </body>
+</html>

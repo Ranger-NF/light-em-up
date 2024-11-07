@@ -45,29 +45,6 @@ function updateProbabilityIndicator(probability) {
   }, 800);
 }
 
-// Resets game state and animates score transitions
-function restartGame() {
-  // Fade out scores with animation
-  player1Score.style.transition = "opacity 0.3s ease-out";
-  player2Score.style.transition = "opacity 0.3s ease-out";
-  player1Score.style.opacity = "0";
-  player2Score.style.opacity = "0";
-
-  setTimeout(() => {
-    score1 = 0;
-    score2 = 0;
-    player1Label.classList.remove("winner");
-    player2Label.classList.remove("winner");
-
-    // Reset scores and fade back in
-    updateDashboard();
-    player1Score.style.transition = "opacity 0.3s ease-in";
-    player2Score.style.transition = "opacity 0.3s ease-in";
-    player1Score.style.opacity = "1";
-    player2Score.style.opacity = "1";
-  }, 300);
-}
-
 // Celebrates winner with confetti and sound
 function celebrateWinner(winnerLabel) {
   winSound.play();
@@ -84,10 +61,8 @@ function celebrateWinner(winnerLabel) {
 function checkWinner() {
   if (score1 >= WINNING_SCORE) {
     celebrateWinner(player1Label);
-    setTimeout(restartGame, 2000);
   } else if (score2 >= WINNING_SCORE) {
     celebrateWinner(player2Label);
-    setTimeout(restartGame, 2000);
   }
 }
 
@@ -126,7 +101,6 @@ function updateDashboard() {
   checkWinner();
 }
 
-console.log(window.location.href);
 // Initialize game dashboard
 updateDashboard();
 
