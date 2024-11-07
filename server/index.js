@@ -10,11 +10,14 @@ const port = process.env.PORT || 3000;
 
 // Serve static files
 app.get("/newgame", (req, res) => {
+  let ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
   if (active_player_count > 0 && active_player_count < 2) {
     last_id++;
     current_players[last_id] = {
       score: 0,
       mcu_id: req.body.mcu_id,
+      identifier: ip,
     };
     active_player_count += 1;
 
@@ -31,7 +34,7 @@ app.post("/score", (req, res) => {
   const score = req.body.score;
 
   if (current_players.has(mcu_id)) {
-    current_players[mcu_id].score += score;
+    current_players[mcu_id].score = score;
     res.send(1);
   } else {
     res.send(0);
