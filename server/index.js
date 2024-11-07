@@ -43,7 +43,7 @@ app.get("/setup", (req, res) => {
 app.get("/data", (req, res) => {
   res.json({
     score1: scores.player1,
-    score2: scores.player1,
+    score2: scores.player2,
   });
 });
 
@@ -56,17 +56,20 @@ app.use(express.static("public"));
 function collectScore() {
   let n = 1;
   for (let eachUrl of playerUrls) {
-    console.log(eachUrl);
     fetch(eachUrl)
       .then(async (res) => {
         let collectedScore = await res.text();
-        console.log(collectedScore);
-        if (n == 1) {
-          scores.player1 = collectedScore;
+        console.log(collectedScore, n);
+
+        if (playerUrls.findIndex((value) => value == eachUrl) == 0) {
+          scores.player1 = parseInt(collectedScore);
         } else {
-          scores.player2 = collectedScore;
+          scores.player2 = parseInt(collectedScore);
         }
       })
       .catch((err) => console.log("Error in", n, err));
+
+    n += 1;
+    console.log(scores);
   }
 }

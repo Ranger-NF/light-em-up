@@ -109,11 +109,15 @@ setInterval(() => {
     .then(async (res) => {
       let data = await res.json();
       console.log(data);
+      let lastScore1 = score1;
+      let lastScore2 = score2;
 
       score1 = data.score1;
       score2 = data.score2;
 
-      updateDashboard();
+      if (score1 != lastScore1 || score2 != lastScore2) {
+        updateDashboard();
+      }
     })
     .then((err) => console.log(err));
 }, 1000);
