@@ -61,25 +61,24 @@ function celebrateWinner(winnerLabel) {
 function checkWinner() {
   if (score1 >= WINNING_SCORE) {
     celebrateWinner(player1Label);
-    player1Name.style.transform = "scale(1.2)";
-    player1Name.style.transition = "transform 0.2s ease-out";
+    player1Score.style.transform = "scale(1.2)";
+    player1Score.style.transition = "transform 0.2s ease-out";
 
-    player2Name.style.transform = "scale(0.8)";
-    player2Name.style.transition = "transform 0.2s ease-out";
+    player2Score.style.transform = "scale(0.8)";
+    player2Score.style.transition = "transform 0.2s ease-out";
   } else if (score2 >= WINNING_SCORE) {
     celebrateWinner(player2Label);
-    player2Name.style.transform = "scale(1.2)";
-    player2Name.style.transition = "transform 0.2s ease-out";
+    player2Score.style.transform = "scale(1.2)";
+    player2Score.style.transition = "transform 0.2s ease-out";
 
-    player1Name.style.transform = "scale(0.8)";
-    player1Name.style.transition = "transform 0.2s ease-out";
+    player1Score.style.transform = "scale(0.8)";
+    player1Score.style.transition = "transform 0.2s ease-out";
   }
 
   setTimeout(() => {
-    player1Name.style.transform = "scale(1)";
-    player2Name.style.transform = "scale(1)";
+    player1Score.style.transform = "scale(1)";
+    player2Score.style.transform = "scale(1)";
   }, 200);
-  x;
 }
 
 // Updates game UI with smooth animations
@@ -143,6 +142,7 @@ setInterval(() => {
         lastPlayer1 != player1Name ||
         lastPlayer2 != player2Name
       ) {
+        console.log("update");
         updateDashboard();
       }
     })
