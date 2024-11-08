@@ -3,8 +3,8 @@ let score1 = 0;
 let score2 = 0;
 const WINNING_SCORE = 10;
 let isAnimating = false;
-const player1Name = "Player 1"; // Player 1 name variable
-const player2Name = "Player 2"; // Player 2 name variable
+let player1Name = "Player 1"; // Player 1 name variable
+let player2Name = "Player 2"; // Player 2 name variable
 
 // DOM elements for game UI
 const probabilityIndicator = document.querySelector(".probability-indicator");
@@ -61,9 +61,25 @@ function celebrateWinner(winnerLabel) {
 function checkWinner() {
   if (score1 >= WINNING_SCORE) {
     celebrateWinner(player1Label);
+    player1Name.style.transform = "scale(1.2)";
+    player1Name.style.transition = "transform 0.2s ease-out";
+
+    player2Name.style.transform = "scale(0.8)";
+    player2Name.style.transition = "transform 0.2s ease-out";
   } else if (score2 >= WINNING_SCORE) {
     celebrateWinner(player2Label);
+    player2Name.style.transform = "scale(1.2)";
+    player2Name.style.transition = "transform 0.2s ease-out";
+
+    player1Name.style.transform = "scale(0.8)";
+    player1Name.style.transition = "transform 0.2s ease-out";
   }
+
+  setTimeout(() => {
+    player1Name.style.transform = "scale(1)";
+    player2Name.style.transform = "scale(1)";
+  }, 200);
+  x;
 }
 
 // Updates game UI with smooth animations
@@ -108,14 +124,25 @@ setInterval(() => {
   fetch(window.location.href + "data")
     .then(async (res) => {
       let data = await res.json();
-      console.log(data);
+
       let lastScore1 = score1;
       let lastScore2 = score2;
+
+      let lastPlayer1 = player1Name;
+      let lastPlayer2 = player2Name;
 
       score1 = data.score1;
       score2 = data.score2;
 
-      if (score1 != lastScore1 || score2 != lastScore2) {
+      player1Name = data.name1;
+      player2Name = data.name2;
+
+      if (
+        score1 != lastScore1 ||
+        score2 != lastScore2 ||
+        lastPlayer1 != player1Name ||
+        lastPlayer2 != player2Name
+      ) {
         updateDashboard();
       }
     })

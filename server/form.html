@@ -13,6 +13,12 @@
             <button type="submit">Submit</button>
         </form>
 
+        <h1>Submit Player Name</h1>
+        <form action="/submit-url" method="POST" id="urlForm">
+            <label for="textInput">Enter Player Name:</label>
+            <input type="text" id="playernameInput" name="playerName" />
+        </form>
+
         <script>
             document
                 .getElementById("urlForm")
@@ -20,7 +26,17 @@
                     event.preventDefault(); // Prevent default form submission
 
                     const url = document.getElementById("urlInput").value;
-                    const requestData = JSON.stringify({ url: url });
+                    const playerName =
+                        document.getElementById("playernameInput").value;
+
+                    let dataDict = {};
+
+                    if (playerName) {
+                        dataDict = { url: url, playerName: playerName };
+                    } else {
+                        dataDict = { url: url };
+                    }
+                    const requestData = JSON.stringify(dataDict);
 
                     fetch(window.location.href, {
                         method: "post",
