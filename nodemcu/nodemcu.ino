@@ -280,7 +280,7 @@ void sendIp() {
     if (!client.connect(serverHost, 80)) {
       return;
     }
-    String url = "/light-em-up";
+    String url = "/<ENTER_NTFY_TOPIC_NAME>";
 
 
     client.print("POST " + url + " HTTP/1.1\r\n" +
