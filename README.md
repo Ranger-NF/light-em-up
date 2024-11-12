@@ -19,3 +19,6 @@
 ![Light 'Em Structure](docs/light-em-up.svg)
 
 ## 📹 Demo video
+
+https://github.com/user-attachments/assets/4d6eaa78-d242-41ed-b979-c37e4f6964c3
+
