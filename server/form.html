@@ -4,20 +4,107 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>🛠 Light 'Em Setup</title>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary-color: #4a90e2;
+                --secondary-color: #2c3e50;
+                --background-color: #f5f6fa;
+                --text-color: #2c3e50;
+            }
+
+            body {
+                font-family: 'Rubik', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: var(--background-color);
+                color: var(--text-color);
+                line-height: 1.6;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: var(--secondary-color);
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 2em;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+
+            label {
+                font-weight: 600;
+                margin-bottom: 5px;
+                color: var(--secondary-color);
+            }
+
+            input[type="text"] {
+                padding: 12px;
+                border: 2px solid #e1e1e1;
+                border-radius: 6px;
+                font-size: 16px;
+                transition: border-color 0.3s ease;
+            }
+
+            input[type="text"]:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+            }
+
+            button {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-weight: 600;
+            }
+
+            button:hover {
+                background-color: #357abd;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
     </head>
     <body>
-        <h1>Submit URL</h1>
-        <form action="/submit-url" method="POST" id="urlForm">
-            <label for="urlInput">Enter URL:</label>
-            <input type="text" id="urlInput" name="url" required />
-            <button type="submit">Submit</button>
-        </form>
+        <div class="container">
+            <h1>🎮 Light 'Em Up: Setup</h1>
+            
+            <form action="/submit-url" method="POST" id="urlForm">
+                <div class="form-group">
+                    <label for="urlInput">Microcontroller URL</label>
+                    <input type="text" id="urlInput" name="url" required placeholder="Enter the game URL" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="playernameInput">Player Name (Optional)</label>
+                    <input type="text" id="playernameInput" name="playerName" placeholder="Enter your name" />
+                </div>
 
-        <h1>Submit Player Name</h1>
-        <form action="/submit-url" method="POST" id="urlForm">
-            <label for="textInput">Enter Player Name:</label>
-            <input type="text" id="playernameInput" name="playerName" />
-        </form>
+                <button type="submit">Start Game</button>
+            </form>
+        </div>
 
         <script>
             document
